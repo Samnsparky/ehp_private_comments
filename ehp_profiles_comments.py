@@ -1,0 +1,101 @@
+import constants
+import util
+
+import os
+
+import jinja2
+import webapp2
+
+from google.appengine.api import users
+
+
+jinja_file_system_loader = jinja2.FileSystemLoader(
+    os.path.join(os.path.dirname(__file__), constants.TEMPLATES_DIR))
+jinja_environment = jinja2.Environment(loader=jinja_file_system_loader)
+
+
+def get_standard_template_dict():
+    cur_user = users.get_current_user()
+    return {
+        'user': cur_user,
+        'logout_url': users.create_logout_url(constants.HOME_URL),
+        'profile_safe_email': util.get_safe_email(cur_user),
+        'is_reviewer': account_facade.is_reviewer(cur_user)
+    }
+
+
+class HomePage(webapp2.RequestHandler):
+    def get(self):
+        cur_user = users.get_current_user()
+        if cur_user:
+            self.redirect('/sync_user')
+        else:
+            template = jinja_environment.get_template('home.html')
+            content = template.render(
+                {'login_url': users.create_login_url(self.request.uri)}
+            )
+            self.response.out.write(content)
+
+
+class SyncUserHandler(webapp2.RequestHandler):
+    def get(self):
+        cur_user = users.get_current_user()
+
+        account_facade.ensure_user_info(cur_user)
+        self.redirect(util.get_user_home(cur_user))
+
+
+class PortfolioOverviewPage(webapp2.RequestHandler):
+    def get(self, target_name):
+        cur_user = users.get_current_user()
+        if not account_facade.viewer_has_access(cur_user, target_name):
+            self.redirect(constants.HOME_URL)
+
+        section_statuses = account_facade.get_updated_sections(
+            cur_user, target_name)
+        sections = constants.PORTFOLIO_SECTIONS
+
+        template = jinja_environment.get_template('portfolio_overview.html')
+        template_vals = get_standard_template_dict()
+        template_vals["owner_name"] = target_name
+        template_vals["sections"] = sections
+        template_vals["section_statuses"] = section_statuses
+        content = template.render(template_vals)
+        self.response.out.write(content)
+
+
+class PortfolioContentPage(webapp2.RequestHandler):
+    def get(self, target_name, section_name):
+        cur_user = users.get_current_user()
+        if not account_facade.viewer_has_access(cur_user, target_name):
+            self.redirect(constants.HOME_URL)
+
+        new_messages = account_facade.get_new_messages(
+            cur_user, target_user, section_name)
+        old_messages = account_facade.get_old_messages(
+            cur_user, target_user, section_name)
+
+        account_facade.set_viewed(cur_user, target_name, section_name)
+        section_statuses = account_facade.get_updated_sections(
+            cur_user, target_name)
+        sections = constants.PORTFOLIO_SECTIONS
+
+        template = jinja_environment.get_template('portfolio_section.html')
+        template_vals = get_standard_template_dict()
+        template_vals["owner_name"] = target_name
+        template_vals["sections"] = sections
+        template_vals["section_statuses"] = section_statuses
+        template_vals["new_messages"] = new_messages
+        template_vals["old_messages"] = old_messages
+        content = template.render(template_vals)
+        self.response.out.write(content)
+
+
+app = webapp2.WSGIApplication(
+        [
+            ('/', HomePage),
+            ('/portfolio/([^/]+)/overview', PortfolioOverviewPage),
+            ('/portfolio/([^/]+)/section/([^/]+)', PortfolioContentPage)
+        ],
+        debug=True
+    )

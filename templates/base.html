@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.css" />
+        <link type="text/css" rel="stylesheet" href="/static/css/base.css" />
+        {% block head %}{% endblock %}
+        <title>
+            EHP Portfolios Private Comments: {% block title %}{% endblock %}
+        </title>
+    </head>
+    <body>
+        <div id="user-bar">
+            {% if user %}
+                {{ user.email() }} -
+                <a class="small-button" href="{{ logout_url }}">logout >></a> /
+                <a class="small-button" href="settings">settings >></a>
+            {% else %}
+                Not logged in
+            {% endif %}
+        </div>
+        <div id="content-bar">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

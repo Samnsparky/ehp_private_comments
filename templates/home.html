@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+<link type="text/css" rel="stylesheet" href="/static/css/home.css" />
+{% endblock %}
+
+{% block content %}
+<div class="content-title-container">
+    <h1 id="title">EHP Portfolios Private Comments</h1>
+    <div id="subtitle">
+        Give and recieve private feedback on your University of Colorado
+        Enginering Honors Program Profile.
+    </div>
+</div>
+<div id="login-box">
+    <a class="btn btn-primary" href="{{ login_url }}">
+        Login with your Google Account >>
+    </a>
+</div>
+{% endblock %}
