@@ -1,3 +1,4 @@
+import account_facade
 import constants
 import util
 
@@ -40,24 +41,24 @@ class HomePage(webapp2.RequestHandler):
 class SyncUserHandler(webapp2.RequestHandler):
     def get(self):
         cur_user = users.get_current_user()
-
         account_facade.ensure_user_info(cur_user)
         self.redirect(util.get_user_home(cur_user))
 
 
 class PortfolioOverviewPage(webapp2.RequestHandler):
-    def get(self, target_name):
+    def get(self, profile_email):
         cur_user = users.get_current_user()
-        if not account_facade.viewer_has_access(cur_user, target_name):
+        if not account_facade.viewer_has_access(cur_user, profile_email):
             self.redirect(constants.HOME_URL)
 
         section_statuses = account_facade.get_updated_sections(
-            cur_user, target_name)
+            cur_user, profile_email)
         sections = constants.PORTFOLIO_SECTIONS
 
         template = jinja_environment.get_template('portfolio_overview.html')
         template_vals = get_standard_template_dict()
-        template_vals["owner_name"] = target_name
+        owner_name = util.get_full_name_from_email(profile_email)
+        template_vals["owner_name"] = ' '.join(owner_name)
         template_vals["sections"] = sections
         template_vals["section_statuses"] = section_statuses
         content = template.render(template_vals)
@@ -65,24 +66,25 @@ class PortfolioOverviewPage(webapp2.RequestHandler):
 
 
 class PortfolioContentPage(webapp2.RequestHandler):
-    def get(self, target_name, section_name):
+    def get(self, target_email, section_name):
         cur_user = users.get_current_user()
-        if not account_facade.viewer_has_access(cur_user, target_name):
+        if not account_facade.viewer_has_access(cur_user, target_email):
             self.redirect(constants.HOME_URL)
 
         new_messages = account_facade.get_new_messages(
-            cur_user, target_user, section_name)
+            cur_user, target_email, section_name)
         old_messages = account_facade.get_old_messages(
-            cur_user, target_user, section_name)
+            cur_user, target_email, section_name)
 
-        account_facade.set_viewed(cur_user, target_name, section_name)
+        account_facade.set_viewed(cur_user, target_email, section_name)
         section_statuses = account_facade.get_updated_sections(
-            cur_user, target_name)
+            cur_user, target_email)
         sections = constants.PORTFOLIO_SECTIONS
 
         template = jinja_environment.get_template('portfolio_section.html')
         template_vals = get_standard_template_dict()
-        template_vals["owner_name"] = target_name
+        owner_name = util.get_full_name_from_email(profile_email)
+        template_vals["owner_name"] = owner_name
         template_vals["sections"] = sections
         template_vals["section_statuses"] = section_statuses
         template_vals["new_messages"] = new_messages
@@ -94,6 +96,7 @@ class PortfolioContentPage(webapp2.RequestHandler):
 app = webapp2.WSGIApplication(
         [
             ('/', HomePage),
+            ('/sync_user', SyncUserHandler),
             ('/portfolio/([^/]+)/overview', PortfolioOverviewPage),
             ('/portfolio/([^/]+)/section/([^/]+)', PortfolioContentPage)
         ],

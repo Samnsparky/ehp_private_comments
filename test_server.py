@@ -38,8 +38,8 @@ class ServerTestCase(unittest2.TestCase):
         self.testbed.deactivate()
 
     def test_user_info(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -54,18 +54,17 @@ class ServerTestCase(unittest2.TestCase):
         user_info_2.put()
 
         ret_info_1 = models.UserInfo.get_for_user(user_1)
-        ret_info_2 = models.UserInfo.get_for_safe_email(
-            util.get_safe_email(user_2))
+        ret_info_2 = models.UserInfo.get_for_email(user_2.email())
 
         assert_user_info_equal(self, ret_info_1, user_info_1)
         assert_user_info_equal(self, ret_info_2, user_info_2)
 
     def test_viewing_profile(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
-        profile_safe_email = "safe_email"
-        section_1_name = "section1"
-        section_2_name = "section2"
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
+        profile_safe_email = 'safe_email'
+        section_1_name = 'section1'
+        section_2_name = 'section2'
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
 
@@ -94,13 +93,13 @@ class ServerTestCase(unittest2.TestCase):
             None)
 
     def test_message(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
-        profile_safe_email = "safe_email"
-        section_1_name = "section1"
-        section_2_name = "section2"
-        contents_1 = "test contents 1"
-        contents_2 = "test contents 2"
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
+        profile_safe_email = 'safe_email'
+        section_1_name = 'section1'
+        section_2_name = 'section2'
+        contents_1 = 'test contents 1'
+        contents_2 = 'test contents 2'
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         test_divisor_timestamp = datetime.datetime(2001, 4, 5)
@@ -139,8 +138,8 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(result_2.timestamp, test_timestamp_2)
 
     def test_is_reviewer(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -158,8 +157,8 @@ class ServerTestCase(unittest2.TestCase):
         self.assertTrue(account_facade.is_reviewer(user_2))
 
     def test_ensure_user_info(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -176,8 +175,8 @@ class ServerTestCase(unittest2.TestCase):
         self.assertFalse(ret_info_2.is_reviewer)
 
     def test_viewer_has_access(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
         profile_safe_email_1 = util.get_safe_email(user_1)
         profile_safe_email_2 = util.get_safe_email(user_2)
 
@@ -194,23 +193,23 @@ class ServerTestCase(unittest2.TestCase):
         user_info_2.put()
 
         self.assertTrue(
-            account_facade.viewer_has_access(user_1, profile_safe_email_1)
+            account_facade.viewer_has_access(user_1, user_1.email())
         )
         self.assertTrue(
-            account_facade.viewer_has_access(user_2, profile_safe_email_1)
+            account_facade.viewer_has_access(user_2, user_1.email())
         )
         self.assertFalse(
-            account_facade.viewer_has_access(user_1, profile_safe_email_2)
+            account_facade.viewer_has_access(user_1, user_2.email())
         )
 
     def test_get_messages(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
-        profile_safe_email = "safe_email"
-        section_1_name = "section1"
-        section_2_name = "section2"
-        contents_1 = "test contents 1"
-        contents_2 = "test contents 2"
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
+        profile_safe_email = 'safe_email'
+        section_1_name = 'section1'
+        section_2_name = 'section2'
+        contents_1 = 'test contents 1'
+        contents_2 = 'test contents 2'
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         viewing_timestamp = datetime.datetime(2001, 4, 5)
@@ -247,13 +246,13 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(old_msgs.get().contents, contents_1)
 
     def test_get_updated_sections(self):
-        user_1 = FakeUser("test1@test.com")
-        user_2 = FakeUser("test2@test.com")
-        profile_safe_email = "safe_email"
-        section_1_name = "section1"
-        section_2_name = "section2"
-        contents_1 = "test contents 1"
-        contents_2 = "test contents 2"
+        user_1 = FakeUser('test1@test.com')
+        user_2 = FakeUser('test2@test.com')
+        profile_safe_email = 'safe_email'
+        section_1_name = 'section1'
+        section_2_name = 'section2'
+        contents_1 = 'test contents 1'
+        contents_2 = 'test contents 2'
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         viewing_timestamp = datetime.datetime(2001, 4, 5)
@@ -287,11 +286,11 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(updated_listing[section_2_name], 1)
 
     def test_set_viewed(self):
-        user_1 = FakeUser("test1@test.com")
-        section_1_name = "section1"
-        contents_1 = "test contents 1"
+        user_1 = FakeUser('test1@test.com')
+        section_1_name = 'section1'
+        contents_1 = 'test contents 1'
         viewing_timestamp = datetime.datetime(2001, 4, 5)
-        profile_safe_email = "safe_email"
+        profile_safe_email = 'safe_email'
 
         viewing_profile = models.ViewingProfile()
         viewing_profile.viewer_email = user_1.email()
@@ -306,6 +305,11 @@ class ServerTestCase(unittest2.TestCase):
             user_1, profile_safe_email, section_1_name)
         self.assertTrue(
             viewing_timestamp != updated_viewing_profile.last_visited)
+
+    def test_get_full_name(self):
+        name = util.get_full_name_from_email('first.last@colorado.edu')
+        self.assertEqual(name[0], 'First')
+        self.assertEqual(name[1], 'Last')
 
 
 if __name__ == '__main__':

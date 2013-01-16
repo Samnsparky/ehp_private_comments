@@ -22,11 +22,11 @@ def viewer_has_access(viewing_user, profile_user_email):
         return False
 
     # Check that a portfolio even exists
-    if not models.UserInfo.get_for_safe_email(profile_user_email):
+    if not models.UserInfo.get_for_email(profile_user_email):
         return False
 
     # Provide access to own portfolio and others if reviewer
-    if util.get_safe_email(viewing_user) == profile_user_email:
+    if viewing_user.email() == profile_user_email:
         return True
     elif is_reviewer(viewing_user):
         return True

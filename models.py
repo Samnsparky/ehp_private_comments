@@ -17,6 +17,12 @@ class UserInfo(db.Model):
         query.filter('safe_email ==', safe_email)
         return query.get()
 
+    @classmethod
+    def get_for_email(cls, email):
+        query = db.Query(cls)
+        query.filter('email ==', email)
+        return query.get()
+
 
 class ViewingProfile(db.Model):
     viewer_email = db.StringProperty()
@@ -51,6 +57,17 @@ class Message(db.Model):
     section_name = db.StringProperty()
     contents = db.TextProperty()
     timestamp = db.DateTimeProperty()
+
+    @classmethod
+    def get_for(cls, profile_user_email, section_name=None):
+        query = db.Query(cls)
+        query.filter('profile_safe_email ==', profile_user_email)
+
+        if section_name != None:
+            query.filter('section_name ==', section_name)
+        
+        query.order('-timestamp')
+        return query
 
     @classmethod
     def get_past_date(cls, profile_user_email, last_visited, section_name=None):

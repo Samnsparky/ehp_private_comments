@@ -1,39 +1,17 @@
-{% extends "base.html" %}
+{% extends "portfolio_base.html" %}
 
-{% block title %}{{ owner_name }} Portfolio{% endblock %}
-
-{% block head %}
-<link type="text/css" rel="stylesheet" href="/static/css/own_portfolio.css" />
-{% endblock %}
-
-{% block content %}
-<div class="content-title-container">
-    <h1 id="title">Comments on {{ owner_name }} Portfolio</h1>
-    <div id="subtitle">
-        <ul id="sections-list">
-            <li>[ overview ]</li>
-            {% for section in sections %}
-            <li>
-                <a href="/{{ profile_safe_email }}/{{ section }}">
-                    {{ section }}{% if section in sections_with_comments %}
-                    <span class="section-message-counter">{{ sections_with_comments[section].num_comments }}</span>
-                    {% endif %}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+{% block portfolio_content %}
 <div id="status-panel">
     {% if sections_with_comments %}
         You have unread comments in the following sections:
         <ul>
         {% for section in sections_with_comments.values() %}
-            <li><a href="/{{ profile_safe_email }}/{{ section.safe_name }}">{{ section.name }} ({{ section.num_comments }})</a></li>
+            <li><a href="/portfolio/{{ profile_safe_email }}/section/{{ section.safe_name }}">{{ section.name }} ({{ section.num_comments }})</a></li>
         {% endfor %}
         <ul>
     {% else %}
         <div class="status-text">
-            You currently have no new comments on your portfolio.
+            No new comments on this portfolio.
         </div>
     {% endif %}
 </div>
