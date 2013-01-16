@@ -1,3 +1,13 @@
+.message
+{
+    padding-bottom:15px;
+}
+
+.message-header
+{
+    font-weight: bold;
+}
+
 #sections-list li
 {
     display: inline;

@@ -19,11 +19,17 @@
         {% for message in new_messages %}
             <div class="message">
                 <span class="new-indicator"></span>
+                <div class="message-header">
+                    {{ message.author_email }} at {{ message.timestamp.strftime('%Y-%m-%d') }}
+                </div>
                 {{ message.contents|safe }}
             </div>
         {% endfor %}
         {% for message in old_messages %}
             <div class="message">
+                <div class="message-header">
+                    {{ message.author_email }} at {{ message.timestamp.strftime('%Y-%m-%d') }}
+                </div>
                 {{ message.contents|safe }}
             </div>
         {% endfor %}
