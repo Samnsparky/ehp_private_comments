@@ -27,9 +27,13 @@ class ViewingProfile(db.Model):
     @classmethod
     def get_for(cls, viewing_user, profile_safe_email, section_name):
         query = db.Query(cls)
+        
         query.filter('viewer_email ==', viewing_user.email())
         query.filter('profile_safe_email ==', profile_safe_email)
-        query.filter('section_name ==', section_name)
+        
+        if section_name != None:
+            query.filter('section_name ==', section_name)
+        
         if query.count() == 0:
             new_profile = ViewingProfile()
             new_profile.viewer_email = viewing_user.email()
@@ -49,20 +53,26 @@ class Message(db.Model):
     timestamp = db.DateTimeProperty()
 
     @classmethod
-    def get_past_date(cls, profile_user_email, last_visited, section_name):
+    def get_past_date(cls, profile_user_email, last_visited, section_name=None):
         query = db.Query(cls)
         query.filter('profile_safe_email ==', profile_user_email)
         query.filter('timestamp >', last_visited)
-        query.filter('section_name ==', section_name)
+
+        if section_name != None:
+            query.filter('section_name ==', section_name)
+        
         query.order('-timestamp')
         return query
 
     @classmethod
     def get_before_or_on_date(cls, profile_user_email, last_visited,
-        section_name):
+        section_name=None):
         query = db.Query(cls)
         query.filter('profile_safe_email ==', profile_user_email)
         query.filter('timestamp <=', last_visited)
-        query.filter('section_name ==', section_name)
+
+        if section_name != None:
+            query.filter('section_name ==', section_name)
+        
         query.order('-timestamp')
         return query

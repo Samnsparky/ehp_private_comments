@@ -1,3 +1,4 @@
+import datetime
 import models
 import util
 
@@ -32,7 +33,7 @@ def viewer_has_access(viewing_user, profile_user_email):
 
     return False
 
-def get_new_messages(viewing_user, profile_user_name, section_name=None):
+def get_new_messages(viewing_user, profile_user_email, section_name=None):
     viewing_profile = models.ViewingProfile.get_for(
         viewing_user, profile_user_email, section_name)
     last_visited = viewing_profile.last_visited
@@ -42,7 +43,7 @@ def get_new_messages(viewing_user, profile_user_name, section_name=None):
     else:
         return models.Message.get_for(profile_user_email, section_name)
 
-def get_old_messages(viewing_user, profile_user_name, section_name=None):
+def get_old_messages(viewing_user, profile_user_email, section_name=None):
     viewing_profile = models.ViewingProfile.get_for(
         viewing_user, profile_user_email, section_name)
     last_visited = viewing_profile.last_visited
@@ -50,13 +51,18 @@ def get_old_messages(viewing_user, profile_user_name, section_name=None):
         profile_user_email, last_visited, section_name)
 
 def get_updated_sections(viewing_user, profile_user_email):
-    return map(
+    section_encounters = map(
         lambda x: x.section_name,
         get_new_messages(viewing_user, profile_user_email)
     )
-    # TODO this isn't meeting req. yet
+    listing = {}
+    for section in section_encounters:
+        if not section in listing:
+            listing[section] = 0
+        listing[section] += 1
+    return listing
 
-def set_viewed(viewing_user, profile_user_name, section_name):
+def set_viewed(viewing_user, profile_user_email, section_name):
     viewing_profile = models.ViewingProfile.get_for(
         viewing_user, profile_user_email, section_name)
     viewing_profile.last_visited = datetime.datetime.now()

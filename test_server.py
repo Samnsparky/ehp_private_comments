@@ -129,8 +129,14 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(query_1.count(), 1)
         self.assertEqual(query_2.count(), 1)
 
-        self.assertEqual(query_1.get().contents, contents_1)
-        self.assertEqual(query_2.get().contents, contents_2)
+        result_1 = query_1.get()
+        result_2 = query_2.get()
+
+        self.assertEqual(result_1.contents, contents_1)
+        self.assertEqual(result_2.contents, contents_2)
+
+        self.assertEqual(result_1.timestamp, test_timestamp_1)
+        self.assertEqual(result_2.timestamp, test_timestamp_2)
 
     def test_is_reviewer(self):
         user_1 = FakeUser("test1@test.com")
@@ -196,6 +202,110 @@ class ServerTestCase(unittest2.TestCase):
         self.assertFalse(
             account_facade.viewer_has_access(user_1, profile_safe_email_2)
         )
+
+    def test_get_messages(self):
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_safe_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
+        contents_1 = "test contents 1"
+        contents_2 = "test contents 2"
+        test_timestamp_1 = datetime.datetime(2000, 1, 2)
+        test_timestamp_2 = datetime.datetime(2003, 4, 5)
+        viewing_timestamp = datetime.datetime(2001, 4, 5)
+
+        test_message_1 = models.Message()
+        test_message_1.author_email = user_1.email()
+        test_message_1.profile_safe_email = profile_safe_email
+        test_message_1.section_name = section_1_name
+        test_message_1.contents = contents_1
+        test_message_1.timestamp = test_timestamp_1
+        test_message_1.put()
+
+        test_message_2 = models.Message()
+        test_message_2.author_email = user_2.email()
+        test_message_2.profile_safe_email = profile_safe_email
+        test_message_2.section_name = section_2_name
+        test_message_2.contents = contents_2
+        test_message_2.timestamp = test_timestamp_2
+        test_message_2.put()
+
+        viewing_profile = models.ViewingProfile()
+        viewing_profile.viewer_email = user_1.email()
+        viewing_profile.profile_safe_email = profile_safe_email
+        viewing_profile.section_name = section_1_name
+        viewing_profile.last_visited = viewing_timestamp
+        viewing_profile.put()
+
+        new_msgs = account_facade.get_new_messages(user_1, profile_safe_email)
+        self.assertEqual(new_msgs.count(), 1)
+        self.assertEqual(new_msgs.get().contents, contents_2)
+
+        old_msgs = account_facade.get_old_messages(user_1, profile_safe_email)
+        self.assertEqual(old_msgs.count(), 1)
+        self.assertEqual(old_msgs.get().contents, contents_1)
+
+    def test_get_updated_sections(self):
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_safe_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
+        contents_1 = "test contents 1"
+        contents_2 = "test contents 2"
+        test_timestamp_1 = datetime.datetime(2000, 1, 2)
+        test_timestamp_2 = datetime.datetime(2003, 4, 5)
+        viewing_timestamp = datetime.datetime(2001, 4, 5)
+
+        test_message_1 = models.Message()
+        test_message_1.author_email = user_1.email()
+        test_message_1.profile_safe_email = profile_safe_email
+        test_message_1.section_name = section_1_name
+        test_message_1.contents = contents_1
+        test_message_1.timestamp = test_timestamp_1
+        test_message_1.put()
+
+        test_message_2 = models.Message()
+        test_message_2.author_email = user_2.email()
+        test_message_2.profile_safe_email = profile_safe_email
+        test_message_2.section_name = section_2_name
+        test_message_2.contents = contents_2
+        test_message_2.timestamp = test_timestamp_2
+        test_message_2.put()
+
+        viewing_profile = models.ViewingProfile()
+        viewing_profile.viewer_email = user_1.email()
+        viewing_profile.profile_safe_email = profile_safe_email
+        viewing_profile.section_name = section_1_name
+        viewing_profile.last_visited = viewing_timestamp
+        viewing_profile.put()
+
+        updated_listing = account_facade.get_updated_sections(user_1,
+            profile_safe_email)
+        self.assertIn(section_2_name, updated_listing)
+        self.assertEqual(updated_listing[section_2_name], 1)
+
+    def test_set_viewed(self):
+        user_1 = FakeUser("test1@test.com")
+        section_1_name = "section1"
+        contents_1 = "test contents 1"
+        viewing_timestamp = datetime.datetime(2001, 4, 5)
+        profile_safe_email = "safe_email"
+
+        viewing_profile = models.ViewingProfile()
+        viewing_profile.viewer_email = user_1.email()
+        viewing_profile.profile_safe_email = profile_safe_email
+        viewing_profile.section_name = section_1_name
+        viewing_profile.last_visited = viewing_timestamp
+        viewing_profile.put()
+
+        account_facade.set_viewed(user_1, profile_safe_email, section_1_name)
+
+        updated_viewing_profile = models.ViewingProfile.get_for(
+            user_1, profile_safe_email, section_1_name)
+        self.assertTrue(
+            viewing_timestamp != updated_viewing_profile.last_visited)
 
 
 if __name__ == '__main__':
