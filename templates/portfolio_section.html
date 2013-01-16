@@ -1,0 +1,32 @@
+{% extends "portfolio_base.html" %}
+
+{% block portfolio_content %}
+<div id="message-panel-container">
+    <div id="message-panel">
+        <form id="add-message-form">
+            <fieldset>
+                <div class="textarea">
+                    <textarea id="comment-input"> </textarea>
+                </div>
+                <div id="comment-submit-button-container">
+                    <input class="btn btn-success" id="comment-submit-button" type="submit" value="Add Comment">
+                </div>
+            </fieldset>
+        </form>
+        <div id="legend">
+            <legend class="">Comments</legend>
+        </div>
+        {% for message in new_messages %}
+            <div class="message">
+                <span class="new-indicator"></span>
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in old_messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

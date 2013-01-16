@@ -29,3 +29,38 @@
 {
     text-align: center;
 }
+
+#message-panel-container
+{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width:800px;
+}
+
+#message-panel
+{
+    width:800px;
+    text-align: left;
+}
+
+#add-message-form
+{
+    padding-bottom: 20px;
+}
+
+#comment-input
+{
+    width:100%;
+    height:50px;
+}
+
+#comment-input:focus
+{
+    height:200px !important;
+}
+
+#comment-submit-button
+{
+    float:right;
+}

@@ -13,5 +13,12 @@ indexes:
 - kind: Message
   properties:
   - name: profile_safe_email
+  - name: section_name
+  - name: timestamp
+    direction: desc
+
+- kind: Message
+  properties:
+  - name: profile_safe_email
   - name: timestamp
     direction: desc
