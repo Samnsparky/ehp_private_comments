@@ -49,18 +49,23 @@
     padding-bottom: 20px;
 }
 
-#comment-input
+#add-message-form:hover #message-input
+{
+    height:200px !important;
+}
+
+#message-input:focus
+{
+    height:200px !important;
+}
+
+#message-input
 {
     width:100%;
     height:50px;
 }
 
-#comment-input:focus
-{
-    height:200px !important;
-}
-
-#comment-submit-button
+#message-submit-button
 {
     float:right;
 }

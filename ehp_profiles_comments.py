@@ -1,13 +1,16 @@
-import account_facade
-import constants
-import util
-
+import cgi
+import datetime
 import os
 
 import jinja2
 import webapp2
 
 from google.appengine.api import users
+
+import account_facade
+import constants
+import models
+import util
 
 
 jinja_file_system_loader = jinja2.FileSystemLoader(
@@ -93,6 +96,27 @@ class PortfolioContentPage(webapp2.RequestHandler):
         template_vals["old_messages"] = old_messages
         content = template.render(template_vals)
         self.response.out.write(content)
+
+    def post(self, profile_email, section_name):
+        cur_user = users.get_current_user()
+        if not account_facade.viewer_has_access(cur_user, profile_email):
+            self.redirect(constants.HOME_URL)
+
+        raw_comment_contents = self.request.get('message-contents', '')
+        comment_contents = cgi.escape(raw_comment_contents)
+        comment_contents = '<br>'.join(comment_contents.splitlines())
+
+        new_message = models.Message()
+        new_message.author_email = cur_user.email()
+        new_message.profile_email = profile_email
+        new_message.section_name = section_name
+        new_message.contents = comment_contents
+        new_message.timestamp = datetime.datetime.now()
+        new_message.put()
+
+        account_facade.set_viewed(cur_user, profile_email, section_name)
+
+        self.redirect(self.request.path)
 
 
 app = webapp2.WSGIApplication(
