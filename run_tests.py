@@ -1,4 +1,11 @@
 #!/usr/bin/python
+"""
+Stock unittest2 script for Google App Engine.
+
+@ref: https://developers.google.com/appengine/docs/python/tools/localunittesting
+@license: GNU GPL v3
+"""
+
 import optparse
 import sys
 # Install the Python unittest2 package before you run this script.
@@ -19,11 +26,11 @@ def main(sdk_path, test_path):
     unittest2.TextTestRunner(verbosity=2).run(suite)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = optparse.OptionParser(USAGE)
     options, args = parser.parse_args()
     if len(args) != 2:
-        print 'Error: Exactly 2 arguments required.'
+        print "Error: Exactly 2 arguments required."
         parser.print_help()
         sys.exit(1)
     SDK_PATH = args[0]

@@ -1,3 +1,10 @@
+"""
+Unit tests for server-side logic for the EHP Portfolios Private Comments app.
+
+@author: Sam Pottinger
+@license: GNU GPL v3
+"""
+
 import datetime
 import unittest2
 import urllib
@@ -12,34 +19,69 @@ import util
 
 
 class FakeUser:
+    """
+    Dependency injection construct to replace GAE stock User class.
+
+    Dependency injection construct to simulate the Google App Engine User
+    class (google.appengine.api.users.User).
+    """
 
     def __init__(self, email):
+        """
+        Create a new FakeUser with the given email.
+
+        @param email: The email address to assign to this FakeUser.
+        @type email: str
+        """
         self.__email = email
 
     def email(self):
+        """
+        Get the email address of this FakeUser.
+
+        @return: The email in this FakeUser.
+        @rtype: str
+        """
         return self.__email
 
 
 def assert_user_info_equal(test, info_1, info_2):
+    """
+    Convienence routine to assert that two UserInfo objects are equivalent.
+
+    Convienence routine to check that two UserInfo instances have the same
+    email addresses and access permissions.
+
+    @param test: The test to run this assertion as part of.
+    @type test: unittest2.TestCase
+    @param info_1: The first UserInfo object to test.
+    @type info_1: models.UserInfo
+    @param info_2: The second UserInfo object to test.
+    @type info_2: models.UserInfo
+    """
     test.assertEqual(info_1.email, info_2.email)
     test.assertEqual(info_1.safe_email, info_2.safe_email)
     test.assertEqual(info_1.is_reviewer, info_2.is_reviewer)
 
 
 class ServerTestCase(unittest2.TestCase):
+    """Test case for server-side logic."""
 
     def setUp(self):
+        """Start the Google App Engine testbed and dependency injection."""
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
     def tearDown(self):
+        """De-activate Google App Engine testbed and dependency injection."""
         self.testbed.deactivate()
 
     def test_user_info(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
+        """Test the models.UserInfo data model."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -60,11 +102,12 @@ class ServerTestCase(unittest2.TestCase):
         assert_user_info_equal(self, ret_info_2, user_info_2)
 
     def test_viewing_profile(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
-        profile_email = 'safe_email'
-        section_1_name = 'section1'
-        section_2_name = 'section2'
+        """Test the models.ViewingProfile data model."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
 
@@ -92,37 +135,38 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(ret_profile_2.last_visited,
             None)
 
-    def test_message(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
-        profile_email = 'safe_email'
-        section_1_name = 'section1'
-        section_2_name = 'section2'
-        contents_1 = 'test contents 1'
-        contents_2 = 'test contents 2'
+    def test_comment(self):
+        """Test the models.Comment data model."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
+        contents_1 = "test contents 1"
+        contents_2 = "test contents 2"
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         test_divisor_timestamp = datetime.datetime(2001, 4, 5)
 
-        test_message_1 = models.Message()
-        test_message_1.author_email = user_1.email()
-        test_message_1.profile_email = profile_email
-        test_message_1.section_name = section_1_name
-        test_message_1.contents = contents_1
-        test_message_1.timestamp = test_timestamp_1
-        test_message_1.put()
+        test_comment_1 = models.Comment()
+        test_comment_1.author_email = user_1.email()
+        test_comment_1.profile_email = profile_email
+        test_comment_1.section_name = section_1_name
+        test_comment_1.contents = contents_1
+        test_comment_1.timestamp = test_timestamp_1
+        test_comment_1.put()
 
-        test_message_2 = models.Message()
-        test_message_2.author_email = user_2.email()
-        test_message_2.profile_email = profile_email
-        test_message_2.section_name = section_2_name
-        test_message_2.contents = contents_2
-        test_message_2.timestamp = test_timestamp_2
-        test_message_2.put()
+        test_comment_2 = models.Comment()
+        test_comment_2.author_email = user_2.email()
+        test_comment_2.profile_email = profile_email
+        test_comment_2.section_name = section_2_name
+        test_comment_2.contents = contents_2
+        test_comment_2.timestamp = test_timestamp_2
+        test_comment_2.put()
 
-        query_1 = models.Message.get_before_or_on_date(profile_email,
+        query_1 = models.Comment.get_before_or_on_date(profile_email,
             test_divisor_timestamp, section_1_name)
-        query_2 = models.Message.get_past_date(profile_email,
+        query_2 = models.Comment.get_past_date(profile_email,
             test_divisor_timestamp, section_2_name)
 
         self.assertEqual(query_1.count(), 1)
@@ -138,8 +182,9 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(result_2.timestamp, test_timestamp_2)
 
     def test_is_reviewer(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
+        """Test recording / reporting user access control permissions."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -157,8 +202,9 @@ class ServerTestCase(unittest2.TestCase):
         self.assertTrue(account_facade.is_reviewer(user_2))
 
     def test_ensure_user_info(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
+        """Test creation logic for the a models.UserInfo data model."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
 
         user_info_1 = models.UserInfo()
         user_info_1.email = user_1.email()
@@ -175,8 +221,9 @@ class ServerTestCase(unittest2.TestCase):
         self.assertFalse(ret_info_2.is_reviewer)
 
     def test_viewer_has_access(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
+        """Test checking user access control permissions.""" 
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
         profile_email_1 = util.get_safe_email(user_1)
         profile_email_2 = util.get_safe_email(user_2)
 
@@ -202,33 +249,34 @@ class ServerTestCase(unittest2.TestCase):
             account_facade.viewer_has_access(user_1, user_2.email())
         )
 
-    def test_get_messages(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
-        profile_email = 'safe_email'
-        section_1_name = 'section1'
-        section_2_name = 'section2'
-        contents_1 = 'test contents 1'
-        contents_2 = 'test contents 2'
+    def test_get_comments(self):
+        """Test comment retrieval for a portfolio / section.""" 
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
+        contents_1 = "test contents 1"
+        contents_2 = "test contents 2"
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         viewing_timestamp = datetime.datetime(2001, 4, 5)
 
-        test_message_1 = models.Message()
-        test_message_1.author_email = user_1.email()
-        test_message_1.profile_email = profile_email
-        test_message_1.section_name = section_1_name
-        test_message_1.contents = contents_1
-        test_message_1.timestamp = test_timestamp_1
-        test_message_1.put()
+        test_comment_1 = models.Comment()
+        test_comment_1.author_email = user_1.email()
+        test_comment_1.profile_email = profile_email
+        test_comment_1.section_name = section_1_name
+        test_comment_1.contents = contents_1
+        test_comment_1.timestamp = test_timestamp_1
+        test_comment_1.put()
 
-        test_message_2 = models.Message()
-        test_message_2.author_email = user_2.email()
-        test_message_2.profile_email = profile_email
-        test_message_2.section_name = section_2_name
-        test_message_2.contents = contents_2
-        test_message_2.timestamp = test_timestamp_2
-        test_message_2.put()
+        test_comment_2 = models.Comment()
+        test_comment_2.author_email = user_2.email()
+        test_comment_2.profile_email = profile_email
+        test_comment_2.section_name = section_2_name
+        test_comment_2.contents = contents_2
+        test_comment_2.timestamp = test_timestamp_2
+        test_comment_2.put()
 
         viewing_profile = models.ViewingProfile()
         viewing_profile.viewer_email = user_1.email()
@@ -237,41 +285,42 @@ class ServerTestCase(unittest2.TestCase):
         viewing_profile.last_visited = viewing_timestamp
         viewing_profile.put()
 
-        new_msgs = account_facade.get_new_messages(user_1, profile_email)
+        new_msgs = account_facade.get_new_comments(user_1, profile_email)
         self.assertEqual(new_msgs.count(), 1)
         self.assertEqual(new_msgs.get().contents, contents_2)
 
-        old_msgs = account_facade.get_old_messages(user_1, profile_email)
+        old_msgs = account_facade.get_old_comments(user_1, profile_email)
         self.assertEqual(old_msgs.count(), 1)
         self.assertEqual(old_msgs.get().contents, contents_1)
 
     def test_get_updated_sections(self):
-        user_1 = FakeUser('test1@test.com')
-        user_2 = FakeUser('test2@test.com')
-        profile_email = 'safe_email'
-        section_1_name = 'section1'
-        section_2_name = 'section2'
-        contents_1 = 'test contents 1'
-        contents_2 = 'test contents 2'
+        """Test listing of unread comments / updated portfolio sections."""
+        user_1 = FakeUser("test1@test.com")
+        user_2 = FakeUser("test2@test.com")
+        profile_email = "safe_email"
+        section_1_name = "section1"
+        section_2_name = "section2"
+        contents_1 = "test contents 1"
+        contents_2 = "test contents 2"
         test_timestamp_1 = datetime.datetime(2000, 1, 2)
         test_timestamp_2 = datetime.datetime(2003, 4, 5)
         viewing_timestamp = datetime.datetime(2001, 4, 5)
 
-        test_message_1 = models.Message()
-        test_message_1.author_email = user_1.email()
-        test_message_1.profile_email = profile_email
-        test_message_1.section_name = section_1_name
-        test_message_1.contents = contents_1
-        test_message_1.timestamp = test_timestamp_1
-        test_message_1.put()
+        test_comment_1 = models.Comment()
+        test_comment_1.author_email = user_1.email()
+        test_comment_1.profile_email = profile_email
+        test_comment_1.section_name = section_1_name
+        test_comment_1.contents = contents_1
+        test_comment_1.timestamp = test_timestamp_1
+        test_comment_1.put()
 
-        test_message_2 = models.Message()
-        test_message_2.author_email = user_2.email()
-        test_message_2.profile_email = profile_email
-        test_message_2.section_name = section_2_name
-        test_message_2.contents = contents_2
-        test_message_2.timestamp = test_timestamp_2
-        test_message_2.put()
+        test_comment_2 = models.Comment()
+        test_comment_2.author_email = user_2.email()
+        test_comment_2.profile_email = profile_email
+        test_comment_2.section_name = section_2_name
+        test_comment_2.contents = contents_2
+        test_comment_2.timestamp = test_timestamp_2
+        test_comment_2.put()
 
         viewing_profile = models.ViewingProfile()
         viewing_profile.viewer_email = user_1.email()
@@ -286,11 +335,12 @@ class ServerTestCase(unittest2.TestCase):
         self.assertEqual(updated_listing[section_2_name], 1)
 
     def test_set_viewed(self):
-        user_1 = FakeUser('test1@test.com')
-        section_1_name = 'section1'
-        contents_1 = 'test contents 1'
+        """Test indicating that a user viewed a portfolio section."""
+        user_1 = FakeUser("test1@test.com")
+        section_1_name = "section1"
+        contents_1 = "test contents 1"
         viewing_timestamp = datetime.datetime(2001, 4, 5)
-        profile_email = 'safe_email'
+        profile_email = "safe_email"
 
         viewing_profile = models.ViewingProfile()
         viewing_profile.viewer_email = user_1.email()
@@ -307,10 +357,11 @@ class ServerTestCase(unittest2.TestCase):
             viewing_timestamp != updated_viewing_profile.last_visited)
 
     def test_get_full_name(self):
-        name = util.get_full_name_from_email('first.last@colorado.edu')
-        self.assertEqual(name[0], 'First')
-        self.assertEqual(name[1], 'Last')
+        """Test getting full name of a user based on his / her email address."""
+        name = util.get_full_name_from_email("first.last@colorado.edu")
+        self.assertEqual(name[0], "First")
+        self.assertEqual(name[1], "Last")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest2.main()

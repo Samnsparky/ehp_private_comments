@@ -13,7 +13,7 @@
         <ul id="sections-list">
             <li>
                 <a href="/portfolio/{{ profile_safe_email }}/overview">
-                    {% if cur_section == 'overview' %}
+                    {% if cur_section == "overview" %}
                     [ overview ]
                     {% else %}
                     overview
@@ -25,7 +25,7 @@
                 <a href="/portfolio/{{ profile_safe_email }}/section/{{ section }}">
                     {% if cur_section == section %}[{% endif %}
                     {{ section }}{% if section in sections_with_comments %}
-                    <span class="section-message-counter">{{ sections_with_comments[section].num_comments }}</span>
+                    <span class="section-comment-counter">{{ sections_with_comments[section].num_comments }}</span>
                     {% endif %}
                     {% if cur_section == section %}]{% endif %}
                 </a>

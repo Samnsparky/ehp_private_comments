@@ -1,36 +1,36 @@
 {% extends "portfolio_base.html" %}
 
 {% block portfolio_content %}
-<div id="message-panel-container">
-    <div id="message-panel">
-        <form id="add-message-form" method="POST">
+<div id="comment-panel-container">
+    <div id="comment-panel">
+        <form id="add-comment-form" method="POST">
             <fieldset>
                 <div class="textarea">
-                    <textarea name="message-contents" id="message-input"></textarea>
+                    <textarea name="comment-contents" id="comment-input"></textarea>
                 </div>
-                <div id="message-submit-button-container">
-                    <input class="btn btn-success" id="message-submit-button" type="submit" value="Add Message">
+                <div id="comment-submit-button-container">
+                    <input class="btn btn-success" id="comment-submit-button" type="submit" value="Add Message">
                 </div>
             </fieldset>
         </form>
         <div id="legend">
             <legend class="">Messages</legend>
         </div>
-        {% for message in new_messages %}
-            <div class="message">
+        {% for comment in new_comments %}
+            <div class="comment">
                 <span class="new-indicator"></span>
-                <div class="message-header">
-                    {{ message.author_email }} at {{ message.timestamp.strftime('%Y-%m-%d') }}
+                <div class="comment-header">
+                    {{ comment.author_email }} at {{ comment.timestamp.strftime("%Y-%m-%d") }}
                 </div>
-                {{ message.contents|safe }}
+                {{ comment.contents|safe }}
             </div>
         {% endfor %}
-        {% for message in old_messages %}
-            <div class="message">
-                <div class="message-header">
-                    {{ message.author_email }} at {{ message.timestamp.strftime('%Y-%m-%d') }}
+        {% for comment in old_comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    {{ comment.author_email }} at {{ comment.timestamp.strftime("%Y-%m-%d") }}
                 </div>
-                {{ message.contents|safe }}
+                {{ comment.contents|safe }}
             </div>
         {% endfor %}
     </div>
