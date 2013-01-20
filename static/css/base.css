@@ -49,12 +49,19 @@ html
     background-color: #F5F5F5;
     float:left;
     overflow: auto;
+    font-size: 12px;
 }
 
 #user-listing .user-listing-entry
 {
     padding-left: 8px;
     font-size: 12px;
+}
+
+#user-listing .user-listing-header
+{
+    font-weight: bold;
+    margin-top: 20px;
 }
 
 #flash-message-bar

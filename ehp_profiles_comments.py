@@ -47,6 +47,8 @@ def get_standard_template_dict():
     }
     if cur_user_info.is_reviewer:
         std_template_vals["users"] = account_facade.get_account_listing()
+        std_template_vals["updated_users"] = \
+            account_facade.get_updated_portfolios(cur_user)
     return std_template_vals
 
 

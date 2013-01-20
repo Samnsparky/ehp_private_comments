@@ -192,6 +192,26 @@ def get_updated_sections(viewing_user, profile_user_email):
     return listing
 
 
+def get_updated_portfolios(viewing_user):
+    user_info_records = list(models.UserInfo.all())
+    portfolio_statuses = map(
+        lambda x: get_updated_sections(viewing_user, x.email),
+        user_info_records
+    )
+    portfolio_statuses_zip = zip(
+        user_info_records,
+        portfolio_statuses
+    )
+    updated_portfolio_statuses = filter(
+        lambda (user_info, status): len(status.keys()) > 0,
+        portfolio_statuses_zip
+    )
+    return map(
+        lambda (user_info, status): user_info,
+        updated_portfolio_statuses
+    )
+
+
 def set_viewed(viewing_user, profile_user_email, section_name):
     """
     Indicate that a user just viewed a given section on a given profile.
