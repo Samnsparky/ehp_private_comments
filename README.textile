@@ -1,0 +1,46 @@
+h1. EHP Portfolios Private Comments
+
+(c) 2013 Sam Pottinger
+Released under the "GNU GPL v3":http://www.gnu.org/licenses/gpl.html license.
+Produced for the "CU Boulder Engineering Honors Program":http://www.cuhonorsengineering.com/ as part of the senior portfolios project.
+
+
+h3. Motivation
+
+Although the senior portfolios project, leveraging Google Sites, has existing functionality for comments, portfolio reviewers and student authors need a way to share private comments only visible to those within the engineering honors program. Moreover, reviewers need a way to sift through the large number of comments flowing in from all of the portfolios. Thus, the EHP Portfolios Private Comments application allows authorized EHP community members and students to share portfolio feedback privately in a tailored portfolio-specific interface.
+
+
+h3. Technologies Used
+
+This application runs on the "Google App Engine Python 2.7":https://developers.google.com/appengine/docs/python/overview platform using "Bootstrap":http://twitter.github.com/bootstrap/ ("Apache License":https://github.com/twitter/bootstrap/blob/master/LICENSE) for styling and "Jinja2":http://jinja.pocoo.org/docs/ ("BSD-2-Clause License":http://opensource.org/licenses/BSD-2-Clause) for templating. As part of the development effort, the application uses "unittest2":http://pypi.python.org/pypi/unittest2 for more sophisticated unit testing.
+
+
+h3. Development Environment
+
+Google App Engine has its own runtime and uses App Engine specific authorization mechanisms. More information on development environment setup can be found at "https://developers.google.com/appengine/docs/python/gettingstartedpython27/devenvironment":https://developers.google.com/appengine/docs/python/gettingstartedpython27/devenvironment. It is also recommended that developers setup the "unittest2":http://pypi.python.org/pypi/unittest2 library as well.
+
+
+h3. Software Engineering Standards
+
+All non-handler code requires at least 80% code coverage via unit tests. Additionally, all server-side code must be commented using the "Epydoc":http://epydoc.sourceforge.net/ format.
+
+
+h3. Typical Maintenance Operations
+
+Many maintenance operations can be performed by changing the constants.py file. Most notably, this includes changing the portfolio sections.
+
+
+h3. Testing
+
+Unit testing requires the App Engine runtime which can be invoked using the following:
+
+$python run_tests.py [app engine SDK path] ./
+
+On a typical Mac OS machine and SDK installation, the following will suffice:
+
+$ python run_tests.py /Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine ./
+
+
+h3. Deployment
+
+Deployment is App Engine specific through the SDK. If deploying to ehp-portfolio-comments.appspot.com, developers will need permission from the application's current administrators (authorized through the App Dashboard). If deploying elsewhere, change app.yaml. More information on deployment is at "https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploading":https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploading.
