@@ -7,6 +7,20 @@
 {% endblock %}
 
 {% block content %}
+{% if is_reviewer %}
+<div id="user-listing">
+    <h3>Portfolios</h3>
+    {% for user in users %}
+    <div class="user-listing-entry">
+        {% if user.first_name == owner_first_name and user.last_name == owner_last_name %}
+            [ {{ user.first_name }} {{ user.last_name }} ]
+        {% else %}
+            <a href="/portfolio/{{ user.safe_email }}/overview">{{ user.first_name }} {{ user.last_name }}</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <div class="content-title-container">
     <h1 id="title">Comments on {{ owner_name }} Portfolio</h1>
     <div id="subtitle">

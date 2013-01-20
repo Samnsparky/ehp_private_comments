@@ -48,3 +48,8 @@ indexes:
   - name: profile_safe_email
   - name: timestamp
     direction: desc
+
+- kind: UserInfo
+  properties:
+  - name: last_name
+  - name: first_name

@@ -79,3 +79,21 @@
 {
     float:right;
 }
+
+#user-listing
+{
+    width: 150px;
+    -moz-box-shadow: 3px 3px 4px #E0E0E0;
+    -webkit-box-shadow: 3px 3px 4px #E0E0E0;
+    box-shadow: 3px 3px 4px #E0E0E0;
+    height: 100%;
+    background-color: #F5F5F5;
+    float:left;
+    overflow: auto;
+}
+
+#user-listing .user-listing-entry
+{
+    padding-left: 8px;
+    font-size: 12px;
+}

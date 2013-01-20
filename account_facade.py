@@ -41,6 +41,9 @@ def ensure_user_info(target_user):
         user_info.email = target_user.email()
         user_info.safe_email = util.get_safe_email(target_user)
         user_info.is_reviewer = False
+        name_parts = util.get_full_name_from_email(target_user.email())
+        user_info.first_name = name_parts[0]
+        user_info.last_name = name_parts[1]
         user_info.put()
     return user_info
 
@@ -177,3 +180,9 @@ def set_viewed(viewing_user, profile_user_email, section_name):
         viewing_user, profile_user_email, section_name)
     viewing_profile.last_visited = datetime.datetime.now()
     viewing_profile.put()
+
+def get_account_listing():
+    query = models.UserInfo.all()
+    query.order("last_name")
+    query.order("first_name")
+    return query

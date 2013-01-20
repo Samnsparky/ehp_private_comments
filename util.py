@@ -9,7 +9,7 @@ import collections
 import re
 import urllib
 
-EMAIL_REGEX = re.compile("(\w+)\.(\w+)\@colorado\.edu")
+EMAIL_REGEX = re.compile("([\w\d\-]+)\.([\w\d\-]+)\@colorado\.edu")
 
 
 # Simple struct to hold information about a portfolio section
@@ -41,7 +41,11 @@ def get_safe_email(target_user):
     @return: URL-safe / URL escaped version of the given user's email address.
     @rtype: str
     """
-    return urllib.quote(target_user.email(), "")
+    return sanitize_email(target_user.email())
+
+
+def sanitize_email(target_email):
+    return urllib.quote(target_email, "")
 
 
 def get_full_name_from_email(target_email):

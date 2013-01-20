@@ -37,12 +37,14 @@ def get_standard_template_dict():
     @rtype: dict
     """
     cur_user = users.get_current_user()
-    return {
+    std_template_vals = {
         "user": cur_user,
         "logout_url": users.create_logout_url(constants.HOME_URL),
-        "profile_safe_email": util.get_safe_email(cur_user),
         "is_reviewer": account_facade.is_reviewer(cur_user)
     }
+    if account_facade.is_reviewer(cur_user):
+        std_template_vals["users"] = account_facade.get_account_listing()
+    return std_template_vals
 
 
 class HomePage(webapp2.RequestHandler):
@@ -115,8 +117,11 @@ class PortfolioOverviewPage(webapp2.RequestHandler):
         template = jinja_environment.get_template("portfolio_overview.html")
         template_vals = get_standard_template_dict()
         owner_name = util.get_full_name_from_email(profile_email)
+        template_vals["profile_safe_email"] = util.sanitize_email(profile_email)
         template_vals["cur_section"] = "overview"
         template_vals["owner_name"] = " ".join(owner_name)
+        template_vals["owner_first_name"] = owner_name[0]
+        template_vals["owner_last_name"] = owner_name[1]
         template_vals["sections"] = sections
         template_vals["section_statuses"] = section_statuses
         content = template.render(template_vals)
@@ -154,8 +159,11 @@ class PortfolioContentPage(webapp2.RequestHandler):
         template = jinja_environment.get_template("portfolio_section.html")
         template_vals = get_standard_template_dict()
         owner_name = util.get_full_name_from_email(profile_email)
+        template_vals["profile_safe_email"] = util.sanitize_email(profile_email)
         template_vals["cur_section"] = section_name
         template_vals["owner_name"] = " ".join(owner_name)
+        template_vals["owner_first_name"] = owner_name[0]
+        template_vals["owner_last_name"] = owner_name[1]
         template_vals["sections"] = sections
         template_vals["section_statuses"] = section_statuses
         template_vals["new_comments"] = new_comments

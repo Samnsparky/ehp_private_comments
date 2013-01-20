@@ -14,6 +14,8 @@ class UserInfo(db.Model):
     email = db.StringProperty()
     safe_email = db.StringProperty()
     is_reviewer = db.BooleanProperty()
+    first_name = db.StringProperty()
+    last_name = db.StringProperty()
 
     @classmethod
     def get_for_user(cls, target_user):
