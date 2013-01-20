@@ -7,9 +7,19 @@ Logic to perform high level user account access and management operations.
 
 import datetime
 
+from google.appengine.api import memcache
+
+import collections
 import constants
 import models
 import util
+
+
+# Simple struct to hold information about a flash message
+FlashMessage = collections.namedtuple(
+    "FlashMessage",
+    ["msg_type", "msg"]
+)
 
 
 def is_reviewer(viewing_user):
@@ -212,3 +222,17 @@ def get_account_listing():
     query.order("last_name")
     query.order("first_name")
     return query
+
+
+def set_flash_message(target_user_email, msg_type, msg):
+    memcache.set("%s_msg" % target_user_email, "%s_%s" % (msg_type, msg))
+
+
+def get_flash_message(target_user_email):
+    memcache_key = "%s_msg" % target_user_email
+    memcache_val = memcache.get(memcache_key)
+    if memcache_val:
+        memcache.delete(memcache_key)
+        return FlashMessage(*memcache_val.split("_"))
+    else:
+        return None

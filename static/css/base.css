@@ -21,6 +21,18 @@ html
     border-bottom-style: solid;
 }
 
+.error
+{
+    color:white;
+    background-color: red;
+}
+
+.confirmation
+{
+    color:white;
+    background-color: green;
+}
+
 #user-bar
 {
     float: right;
@@ -43,4 +55,12 @@ html
 {
     padding-left: 8px;
     font-size: 12px;
+}
+
+#flash-message-bar
+{
+    margin-left: 5px;
+    width:700px;
+    padding:10px;
+    float: left;
 }

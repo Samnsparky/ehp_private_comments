@@ -42,7 +42,8 @@ def get_standard_template_dict():
         "user": cur_user,
         "logout_url": users.create_logout_url(constants.HOME_URL),
         "is_reviewer": cur_user_info.is_reviewer,
-        "is_admin": cur_user_info.is_admin
+        "is_admin": cur_user_info.is_admin,
+        "flash_message": account_facade.get_flash_message(cur_user.email())
     }
     if cur_user_info.is_reviewer:
         std_template_vals["users"] = account_facade.get_account_listing()
@@ -60,15 +61,30 @@ class HomePage(webapp2.RequestHandler):
         non-authenticated visitors and redirects authenticated users to the
         profile sync user page. 
         """
+        # Check to see if user is authenticated
         cur_user = users.get_current_user()
         if cur_user:
-            self.redirect("/sync_user")
+
+            # If the user is valid and logged in
+            if util.check_email(cur_user.email()):
+                self.redirect("/sync_user")
+                return
+
+            flash_message = account_facade.get_flash_message(cur_user.email())
+
         else:
-            template = jinja_environment.get_template("home.html")
-            content = template.render(
-                {"login_url": users.create_login_url(self.request.uri)}
-            )
-            self.response.out.write(content)
+
+            flash_message = None
+
+        # Render page
+        template = jinja_environment.get_template("home.html")
+        content = template.render(
+            {
+                "login_url": users.create_login_url("/sync_user"),
+                "flash_message": flash_message
+            }
+        )
+        self.response.out.write(content)
 
 
 class SyncUserHandler(webapp2.RequestHandler):
@@ -88,9 +104,15 @@ class SyncUserHandler(webapp2.RequestHandler):
         redirected to the page specified by util.get_user_home.
         """
         cur_user = users.get_current_user()
+        target_email = cur_user.email()
 
-        if not util.check_email(cur_user.email()):
-            self.redirect(users.create_logout_url(constants.HOME_URL))
+        if not util.check_email(target_email):
+            account_facade.set_flash_message(
+                target_email,
+                constants.FLASH_MSG_TYPE_ERR,
+                constants.FLASH_MSG_INVALID_EMAIL
+            )
+            self.redirect(constants.HOME_URL)
         else:
             account_facade.ensure_user_info(cur_user)
             self.redirect(util.get_user_home(cur_user))
@@ -206,7 +228,12 @@ class PortfolioContentPage(webapp2.RequestHandler):
         new_comment.put()
 
         account_facade.set_viewed(cur_user, profile_email, section_name)
-        account_facade.set_viewed(cur_user, profile_email, None)
+
+        account_facade.set_flash_message(
+            cur_user.email(),
+            constants.FLASH_MSG_TYPE_CONFIRMATION,
+            constants.FLASH_MSG_ADDED_COMMENT
+        )
 
         self.redirect(self.request.path)
 

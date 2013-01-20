@@ -19,9 +19,6 @@
                 Not logged in
             {% endif %}
         </div>
-        {% if flash_message %}
-        <div id="flash-message-bar">{{ flash_message }}</div>
-        {% endif %}
         <div id="content-bar">
             {% if is_reviewer %}
             <div id="user-listing">
@@ -37,6 +34,11 @@
                 {% endfor %}
             </div>
             {% endif %}
+
+            {% if flash_message %}
+            <div id="flash-message-bar" class="{{ flash_message.msg_type }}">{{ flash_message.msg }}</div>
+            {% endif %}
+
             {% block content %}
             {% endblock %}
         </div>
