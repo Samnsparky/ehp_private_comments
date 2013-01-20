@@ -7,7 +7,7 @@ Produced for the "CU Boulder Engineering Honors Program":http://www.cuhonorsengi
 
 h3. Motivation
 
-Although the senior portfolios project, leveraging Google Sites, has existing functionality for comments, portfolio reviewers and student authors need a way to share private comments only visible to those within the engineering honors program. Moreover, reviewers need a way to sift through the large number of comments flowing in from all of the portfolios. Thus, the EHP Portfolios Private Comments application allows authorized EHP community members and students to share portfolio feedback privately in a tailored portfolio-specific interface.
+Although the senior portfolios project, leveraging Google Sites, provides existing functionality for comments, portfolio reviewers and student authors need a way to share private feedback only visible to those within the Engineering Honors Program. Moreover, reviewers need a way to sift through the significant mass of information flowing in from all of the students. Thus, the EHP Portfolios Private Comments application allows authorized EHP community members and students to share portfolio feedback privately in a tailored portfolio-specific interface.
 
 
 h3. Technologies Used
