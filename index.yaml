@@ -10,6 +10,19 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Comment
+  properties:
+  - name: profile_email
+  - name: section_name
+  - name: timestamp
+    direction: desc
+
+- kind: Comment
+  properties:
+  - name: profile_email
+  - name: timestamp
+    direction: desc
+
 - kind: Message
   properties:
   - name: profile_email
