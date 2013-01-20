@@ -6,6 +6,8 @@ Logic to perform high level user account access and management operations.
 """
 
 import datetime
+
+import constants
 import models
 import util
 
@@ -152,15 +154,11 @@ def get_updated_sections(viewing_user, profile_user_email):
              unread comments for the given user.
     @rtype: Dict mapping str to int
     """
-    section_encounters = map(
-        lambda x: x.section_name,
-        get_new_comments(viewing_user, profile_user_email)
-    )
     listing = {}
-    for section in section_encounters:
-        if not section in listing:
-            listing[section] = 0
-        listing[section] += 1
+    for section in constants.PORTFOLIO_SECTIONS:
+        new_comments = list(get_new_comments(viewing_user, profile_user_email, section))
+        if len(new_comments) > 0:
+            listing[section] = len(new_comments)
     return listing
 
 
