@@ -255,14 +255,20 @@ class AdminPageHandler(webapp2.RequestHandler):
 class ReviewerUpgradeHandler(webapp2.RequestHandler):
     """Handler to make a user into a reviewer."""
 
-    def get(self, profile_email):
+    def get(self, target_email):
         cur_user = users.get_current_user()
         if not account_facade.is_admin(cur_user):
             self.redirect(constants.HOME_URL)
 
-        target_user_info = models.UserInfo.get_for_email(profile_email)
+        target_user_info = models.UserInfo.get_for_email(target_email)
         target_user_info.is_reviewer = True
         target_user_info.put()
+
+        account_facade.set_flash_message(
+            cur_user.email(),
+            constants.FLASH_MSG_TYPE_CONFIRMATION,
+            constants.FLASH_MSG_USER_MADE_REVIEWER % target_email
+        )
 
         self.redirect("/administer")
 
@@ -270,15 +276,21 @@ class ReviewerUpgradeHandler(webapp2.RequestHandler):
 class AdminUpgradeHandler(webapp2.RequestHandler):
     """Handler to make a user into a administrator."""
 
-    def get(self, profile_email):
+    def get(self, target_email):
         cur_user = users.get_current_user()
         if not account_facade.is_admin(cur_user):
             self.redirect(constants.HOME_URL)
 
-        target_user_info = models.UserInfo.get_for_email(profile_email)
+        target_user_info = models.UserInfo.get_for_email(target_email)
         target_user_info.is_reviewer = True
         target_user_info.is_admin = True
         target_user_info.put()
+
+        account_facade.set_flash_message(
+            cur_user.email(),
+            constants.FLASH_MSG_TYPE_CONFIRMATION,
+            constants.FLASH_MSG_USER_MADE_ADMIN % target_email
+        )
 
         self.redirect("/administer")
 

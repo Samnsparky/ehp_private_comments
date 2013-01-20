@@ -88,9 +88,7 @@ class ViewingProfile(db.Model):
         
         query.filter("viewer_email ==", viewing_user.email())
         query.filter("profile_email ==", profile_email)
-        
-        if section_name != None:
-            query.filter("section_name ==", section_name)
+        query.filter("section_name ==", section_name)
         
         if query.count() == 0:
             new_profile = ViewingProfile()

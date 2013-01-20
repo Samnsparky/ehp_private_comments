@@ -21,3 +21,5 @@ FLASH_MSG_TYPE_CONFIRMATION = "confirmation"
 FLASH_MSG_INVALID_EMAIL = "Sorry! This service is only available to accounts" \
     " of the form [first].[last]@colorado.edu"
 FLASH_MSG_ADDED_COMMENT = "Comment added!"
+FLASH_MSG_USER_MADE_ADMIN = "User %s given administrator rights."
+FLASH_MSG_USER_MADE_REVIEWER = "User %s given reviewer rights."
