@@ -205,11 +205,43 @@ class PortfolioContentPage(webapp2.RequestHandler):
         self.redirect(self.request.path)
 
 
+class AdminPageHandler(webapp2.RequestHandler):
+    """Handler to render admin page."""
+
+    def get(self):
+        cur_user = users.get_current_user()
+        if not account_facade.is_reviewer(cur_user):
+            self.redirect(constants.HOME_URL)
+
+        template = jinja_environment.get_template("admin.html")
+        template_vals = get_standard_template_dict()
+        content = template.render(template_vals)
+        self.response.out.write(content)
+
+
+
+class AdminUpgradeHandler(webapp2.RequestHandler):
+    """Handler to make a user into a reviewer."""
+
+    def get(self, profile_email):
+        cur_user = users.get_current_user()
+        if not account_facade.is_reviewer(cur_user):
+            self.redirect(constants.HOME_URL)
+
+        target_user_info = models.UserInfo.get_for_email(profile_email)
+        target_user_info.is_reviewer = True
+        target_user_info.put()
+
+        self.redirect("/administer")
+
+
 # Register handlers along with URL patterns
 app = webapp2.WSGIApplication(
         [
             ("/", HomePage),
             ("/sync_user", SyncUserHandler),
+            ("/administer", AdminPageHandler),
+            ("/administer/([^/]+)/make_admin", AdminUpgradeHandler),
             ("/portfolio/([^/]+)/overview", PortfolioOverviewPage),
             ("/portfolio/([^/]+)/section/([^/]+)", PortfolioContentPage)
         ],
