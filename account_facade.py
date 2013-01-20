@@ -156,9 +156,15 @@ def get_updated_sections(viewing_user, profile_user_email):
     """
     listing = {}
     for section in constants.PORTFOLIO_SECTIONS:
-        new_comments = list(get_new_comments(viewing_user, profile_user_email, section))
-        if len(new_comments) > 0:
-            listing[section] = len(new_comments)
+        new_comments_query = get_new_comments(
+            viewing_user,
+            profile_user_email,
+            section
+        )
+        new_comments = list(new_comments_query)
+        num_new_comments = len(new_comments)
+        if num_new_comments > 0:
+            listing[section] = num_new_comments
     return listing
 
 
@@ -179,7 +185,15 @@ def set_viewed(viewing_user, profile_user_email, section_name):
     viewing_profile.last_visited = datetime.datetime.now()
     viewing_profile.put()
 
+
 def get_account_listing():
+    """
+    Get a list of all of the users registered with the application.
+
+    @return: Iterable over user information sorted first by last name and then
+             first name.
+    @rtype: Iterable over models.UserInfo
+    """
     query = models.UserInfo.all()
     query.order("last_name")
     query.order("first_name")

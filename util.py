@@ -45,6 +45,14 @@ def get_safe_email(target_user):
 
 
 def sanitize_email(target_email):
+    """
+    Get a URL-safe version of an email address.
+
+    @param target_email: The email address to URL escape.
+    @type target_email: str
+    @return: The URL-safe version of the provided email.
+    @rtype: str
+    """
     return urllib.quote(target_email, "")
 
 
