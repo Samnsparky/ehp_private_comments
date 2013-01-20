@@ -22,7 +22,7 @@ Google App Engine has its own runtime and uses App Engine specific authorization
 
 h3. Software Engineering Standards
 
-All non-handler code requires at least 80% code coverage via unit tests. Additionally, all server-side code must be commented using the "Epydoc":http://epydoc.sourceforge.net/ format.
+All non-handler code requires at least 70% code coverage via unit tests. Additionally, all server-side code must be commented using the "Epydoc":http://epydoc.sourceforge.net/ format. Line lengths in non-HTML/Textile/YAML/CSS files should not exceed 80 characters.
 
 
 h3. Typical Maintenance Operations
@@ -39,6 +39,8 @@ $python run_tests.py [app engine SDK path] ./
 On a typical Mac OS machine and SDK installation, the following will suffice:
 
 $ python run_tests.py /Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine ./
+
+Information on how to run the development server is in the App Engine SDK documentation.
 
 
 h3. Deployment

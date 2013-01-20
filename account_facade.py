@@ -245,10 +245,30 @@ def get_account_listing():
 
 
 def set_flash_message(target_user_email, msg_type, msg):
+    """
+    Register a flash message for a user to be displayed on their next page load.
+
+    @param target_user_email: The email address of the user to leave a message
+                              for.
+    @type target_user_email: str
+    @param msg_type: Constant indicating the type of message that is being left
+                     for the given user.
+    @type msg_type: str
+    @param msg: The message to leave (cannot contain underscores).
+    @type msg: str
+    """
     memcache.set("%s_msg" % target_user_email, "%s_%s" % (msg_type, msg))
 
 
 def get_flash_message(target_user_email):
+    """
+    Get any waiting flash messages for a user and delete them.
+
+    @param target_user_email: The user to get the messages for.
+    @type target_user_email: str
+    @return: The waiting message or None if no messages waiting.
+    @rtype: FlashMessage
+    """
     memcache_key = "%s_msg" % target_user_email
     memcache_val = memcache.get(memcache_key)
     if memcache_val:
