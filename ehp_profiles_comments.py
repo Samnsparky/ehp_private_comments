@@ -88,8 +88,12 @@ class SyncUserHandler(webapp2.RequestHandler):
         redirected to the page specified by util.get_user_home.
         """
         cur_user = users.get_current_user()
-        account_facade.ensure_user_info(cur_user)
-        self.redirect(util.get_user_home(cur_user))
+
+        if not util.check_email(cur_user.email()):
+            self.redirect(users.create_logout_url(constants.HOME_URL))
+        else:
+            account_facade.ensure_user_info(cur_user)
+            self.redirect(util.get_user_home(cur_user))
 
 
 class PortfolioOverviewPage(webapp2.RequestHandler):

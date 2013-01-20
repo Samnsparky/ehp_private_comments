@@ -19,6 +19,18 @@ SectionStatus = collections.namedtuple(
 )
 
 
+def check_email(target_email):
+    """
+    Check that an email address is an individual email from colorado.edu.
+
+    @param target_email: The email address to check.
+    @type target_email: str
+    @return: True if the email is for an invidual at CU and False otherwise.
+    @rtype: bool
+    """
+    return EMAIL_REGEX.match(target_email) != None
+
+
 def get_user_home(target_user):
     """
     Get the URL that a user should be redirected to after authenticating.
