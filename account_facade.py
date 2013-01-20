@@ -25,6 +25,19 @@ def is_reviewer(viewing_user):
     return target_user_info.is_reviewer
 
 
+def is_admin(viewing_user):
+    """
+    Determines if the specified user has "profile reviewer" access privileges.
+
+    @param viewing_user: The user to determine reviewer privileges for.
+    @type viewing_user: google.appengine.api.users.User
+    @return: True if user can review other users' profiles and False otherwise.
+    @rtype: bool
+    """
+    target_user_info = models.UserInfo.get_for_user(viewing_user)
+    return target_user_info.is_admin
+
+
 def ensure_user_info(target_user):
     """
     Ensure that a models.UserInfo record exists for the target user.
@@ -43,6 +56,7 @@ def ensure_user_info(target_user):
         user_info.email = target_user.email()
         user_info.safe_email = util.get_safe_email(target_user)
         user_info.is_reviewer = False
+        user_info.is_admin = False
         name_parts = util.get_full_name_from_email(target_user.email())
         user_info.first_name = name_parts[0]
         user_info.last_name = name_parts[1]

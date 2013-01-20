@@ -37,12 +37,14 @@ def get_standard_template_dict():
     @rtype: dict
     """
     cur_user = users.get_current_user()
+    cur_user_info = models.UserInfo.get_for_user(cur_user)
     std_template_vals = {
         "user": cur_user,
         "logout_url": users.create_logout_url(constants.HOME_URL),
-        "is_reviewer": account_facade.is_reviewer(cur_user)
+        "is_reviewer": cur_user_info.is_reviewer,
+        "is_admin": cur_user_info.is_admin
     }
-    if account_facade.is_reviewer(cur_user):
+    if cur_user_info.is_reviewer:
         std_template_vals["users"] = account_facade.get_account_listing()
     return std_template_vals
 
@@ -210,7 +212,7 @@ class AdminPageHandler(webapp2.RequestHandler):
 
     def get(self):
         cur_user = users.get_current_user()
-        if not account_facade.is_reviewer(cur_user):
+        if not account_facade.is_admin(cur_user):
             self.redirect(constants.HOME_URL)
 
         template = jinja_environment.get_template("admin.html")
@@ -219,17 +221,32 @@ class AdminPageHandler(webapp2.RequestHandler):
         self.response.out.write(content)
 
 
-
-class AdminUpgradeHandler(webapp2.RequestHandler):
+class ReviewerUpgradeHandler(webapp2.RequestHandler):
     """Handler to make a user into a reviewer."""
 
     def get(self, profile_email):
         cur_user = users.get_current_user()
-        if not account_facade.is_reviewer(cur_user):
+        if not account_facade.is_admin(cur_user):
             self.redirect(constants.HOME_URL)
 
         target_user_info = models.UserInfo.get_for_email(profile_email)
         target_user_info.is_reviewer = True
+        target_user_info.put()
+
+        self.redirect("/administer")
+
+
+class AdminUpgradeHandler(webapp2.RequestHandler):
+    """Handler to make a user into a administrator."""
+
+    def get(self, profile_email):
+        cur_user = users.get_current_user()
+        if not account_facade.is_admin(cur_user):
+            self.redirect(constants.HOME_URL)
+
+        target_user_info = models.UserInfo.get_for_email(profile_email)
+        target_user_info.is_reviewer = True
+        target_user_info.is_admin = True
         target_user_info.put()
 
         self.redirect("/administer")
@@ -241,6 +258,7 @@ app = webapp2.WSGIApplication(
             ("/", HomePage),
             ("/sync_user", SyncUserHandler),
             ("/administer", AdminPageHandler),
+            ("/administer/([^/]+)/make_reviewer", ReviewerUpgradeHandler),
             ("/administer/([^/]+)/make_admin", AdminUpgradeHandler),
             ("/portfolio/([^/]+)/overview", PortfolioOverviewPage),
             ("/portfolio/([^/]+)/section/([^/]+)", PortfolioContentPage)

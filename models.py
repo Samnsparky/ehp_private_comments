@@ -14,6 +14,7 @@ class UserInfo(db.Model):
     email = db.StringProperty()
     safe_email = db.StringProperty()
     is_reviewer = db.BooleanProperty()
+    is_admin = db.BooleanProperty()
     first_name = db.StringProperty()
     last_name = db.StringProperty()
 

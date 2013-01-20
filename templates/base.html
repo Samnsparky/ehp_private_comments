@@ -12,7 +12,7 @@
             {% if user %}
                 {{ user.email() }} -
                 <a class="small-button" href="{{ logout_url }}">logout >></a>
-                {% if is_reviewer %}
+                {% if is_admin %}
                  / <a class="small-button" href="/administer">administer >></a>
                 {% endif %}
             {% else %}
