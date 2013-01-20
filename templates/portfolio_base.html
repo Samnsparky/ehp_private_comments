@@ -38,8 +38,8 @@
             <li>
                 <a href="/portfolio/{{ profile_safe_email }}/section/{{ section }}">
                     {% if cur_section == section %}[{% endif %}
-                    {{ section }}{% if section in sections_with_comments %}
-                    <span class="section-comment-counter">{{ sections_with_comments[section].num_comments }}</span>
+                    {{ section }}{% if section in section_statuses %}
+                    <span class="section-comment-counter">{{ section_statuses[section] }}</span>
                     {% endif %}
                     {% if cur_section == section %}]{% endif %}
                 </a>

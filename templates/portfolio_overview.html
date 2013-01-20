@@ -2,11 +2,11 @@
 
 {% block portfolio_content %}
 <div id="status-panel">
-    {% if sections_with_comments %}
+    {% if section_statuses.values() %}
         You have unread comments in the following sections:
         <ul>
-        {% for section in sections_with_comments.values() %}
-            <li><a href="/portfolio/{{ profile_safe_email }}/section/{{ section.safe_name }}">{{ section.name }} ({{ section.num_comments }})</a></li>
+        {% for section_name, section_count in section_statuses.items() %}
+            <li><a href="/portfolio/{{ profile_safe_email }}/section/{{ section_name }}">{{ section_name }} ({{ section_count }})</a></li>
         {% endfor %}
         <ul>
     {% else %}

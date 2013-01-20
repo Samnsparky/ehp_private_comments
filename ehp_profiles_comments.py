@@ -113,6 +113,7 @@ class PortfolioOverviewPage(webapp2.RequestHandler):
         section_statuses = account_facade.get_updated_sections(
             cur_user, profile_email)
         sections = constants.PORTFOLIO_SECTIONS
+        account_facade.set_viewed(cur_user, profile_email, None)
 
         template = jinja_environment.get_template("portfolio_overview.html")
         template_vals = get_standard_template_dict()
@@ -151,10 +152,10 @@ class PortfolioContentPage(webapp2.RequestHandler):
         old_comments = account_facade.get_old_comments(
             cur_user, profile_email, section_name)
 
-        account_facade.set_viewed(cur_user, profile_email, section_name)
         section_statuses = account_facade.get_updated_sections(
             cur_user, profile_email)
         sections = constants.PORTFOLIO_SECTIONS
+        account_facade.set_viewed(cur_user, profile_email, section_name)
 
         template = jinja_environment.get_template("portfolio_section.html")
         template_vals = get_standard_template_dict()
@@ -199,6 +200,7 @@ class PortfolioContentPage(webapp2.RequestHandler):
         new_comment.put()
 
         account_facade.set_viewed(cur_user, profile_email, section_name)
+        account_facade.set_viewed(cur_user, profile_email, None)
 
         self.redirect(self.request.path)
 
