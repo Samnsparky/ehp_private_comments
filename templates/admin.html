@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Administer{% endblock %}
+
+{% block head %}
+<link type="text/css" rel="stylesheet" href="/static/css/admin.css" />
+{% endblock %}
+
+{% block content %}
+<div class="content-title-container">
+    <h1 id="title">Administer</h1>
+    <div id="subtitle">
+        "It's a strange thing, but when you are dreading something, and would <br>
+        give anything to slow down time, it has a disobliging habit of speeding up." - J.K. Rowling
+    </div>
+</div>
+<div id="admin-panel-container">
+    <div id="admin-panel">
+        <div id="admin-user-list">
+            <table>
+            {% for user in users %}
+                <tr class="admin-user-item">
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>
+                        {% if user.is_reviewer %}
+                        Already a reviewer
+                        {% else %}
+                        <a href="/administer/{{ user.safe_email }}/make_reviewer">Make reviewer >></a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_admin %}
+                        Already an admin
+                        {% else %}
+                        <a href="/administer/{{ user.safe_email }}/make_admin">Make admin >></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

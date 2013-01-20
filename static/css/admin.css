@@ -1,0 +1,22 @@
+#admin-panel-container
+{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width:800px;
+}
+
+#admin-panel
+{
+    text-align: left;
+}
+
+#admin-user-list td
+{
+    width:300px;
+}
+
+#admin-user-list tr:nth-child(even)
+{
+    background-color: #F0F0F0;
+}
